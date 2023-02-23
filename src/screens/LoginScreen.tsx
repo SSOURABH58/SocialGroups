@@ -1,15 +1,16 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-// import { useNavigation } from '@react-navigation/native';
+import {useNavigation, ParamListBase} from '@react-navigation/native';
 // import { useDispatch } from 'react-redux';
 // import { login } from '../redux/authSlice';
 import InputField from '../components/InputField';
 import Button from '../components/Button';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  //   const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   //   const dispatch = useDispatch();
 
   const handleLogin = () => {
@@ -36,8 +37,7 @@ const LoginScreen = () => {
         <Text style={styles.footerText}>Don't have an account? </Text>
         <Text
           style={styles.footerLink}
-          //   onPress={() => navigation.navigate('Signup')}
-        >
+          onPress={() => navigation.navigate('Signup')}>
           Sign up
         </Text>
       </View>
