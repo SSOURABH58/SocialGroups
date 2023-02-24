@@ -61,6 +61,9 @@ const authSlice = createSlice({
     updateUserId(state, action: PayloadAction<string>) {
       state.user = {...state.user, uid: action.payload};
     },
+    logout(state) {
+      state.user = null;
+    },
   },
   extraReducers(builder) {
     builder
@@ -73,6 +76,6 @@ const authSlice = createSlice({
   },
 });
 
-export const {updateProfile, updateUserId} = authSlice.actions;
+export const {updateProfile, updateUserId, logout} = authSlice.actions;
 
 export default authSlice.reducer;

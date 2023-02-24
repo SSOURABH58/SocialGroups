@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import HomeScreen from '../screens/HomeScreen';
-import GroupScreen from '../screens/GroupScreen';
+import GroupScreen from '../screens/JoinGroupScreen';
 import MessageScreen from '../screens/MessageScreen';
 import AuthStack from './AuthStack';
 import MainStack from './MainStack';

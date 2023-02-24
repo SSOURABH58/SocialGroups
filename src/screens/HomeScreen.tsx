@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, FlatList, Modal} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {ParamListBase, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import Button from '../components/Button';
 import InputField from '../components/InputField';
@@ -12,11 +12,12 @@ import {createGroup} from '../utils/groups';
 import firestore from '@react-native-firebase/firestore';
 import {updateProfile} from '../store/authSlice';
 import {profile} from '../types/User';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const HomeScreen = () => {
   const groupsRef = firestore().collection('groups');
 
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   const [groups, setGroups] = useState<Group[]>([]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const user = useSelector((state: RootState) => state.auth.user);
@@ -34,7 +35,7 @@ const HomeScreen = () => {
   };
 
   const handleJoinGroup = () => {
-    // navigation.navigate('JoinGroup');
+    navigation.navigate('JoinGroup');
   };
 
   useEffect(() => {
@@ -54,21 +55,23 @@ const HomeScreen = () => {
   }, [userId]);
 
   useEffect(() => {
-    const unsubscribe = groupIds
-      ? groupsRef
-          .where(firestore.FieldPath.documentId(), 'in', groupIds)
-          .onSnapshot(querySnapshot => {
-            const newGroups: Group[] = [];
-            querySnapshot.forEach(doc => {
-              const {name} = doc.data();
-              newGroups.push({
-                name,
-                id: doc.id,
+    const unsubscribe =
+      groupIds && groupIds.length
+        ? groupsRef
+            .where(firestore.FieldPath.documentId(), 'in', groupIds)
+            .onSnapshot(querySnapshot => {
+              const newGroups: Group[] = [];
+              querySnapshot.forEach(doc => {
+                const {name, members} = doc.data();
+                newGroups.push({
+                  name,
+                  id: doc.id,
+                  members,
+                });
               });
-            });
-            setGroups(newGroups);
-          })
-      : null;
+              setGroups(newGroups);
+            })
+        : null;
     return () => {
       unsubscribe && unsubscribe();
     };

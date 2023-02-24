@@ -1,16 +1,27 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Pressable} from 'react-native';
 import React from 'react';
 import {Group} from '../types/Group';
+import {ParamListBase, useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useDispatch} from 'react-redux';
+import {setCurrentGroupID} from '../store/appSlice';
 
 interface props {
   item: Group;
 }
 
 const GroupItem = ({item}: props) => {
+  const navigator = useNavigation<NativeStackNavigationProp<ParamListBase>>();
+  const dispatch = useDispatch();
+
+  const handleClick = () => {
+    dispatch(setCurrentGroupID(item.id));
+    navigator.navigate('Chat', {groupId: item.id});
+  };
   return (
-    <View style={styles.groupItem}>
+    <Pressable style={styles.groupItem} onPress={handleClick}>
       <Text style={styles.groupName}>{item.name}</Text>
-    </View>
+    </Pressable>
   );
 };
 

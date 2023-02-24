@@ -1,6 +1,6 @@
 export interface Message {
   id: string;
-  groupId: string;
   text: string;
-  timestamp: number;
+  timestamp: any;
+  user: any;
 }

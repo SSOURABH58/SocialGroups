@@ -26,16 +26,17 @@ export const createGroup = async (name: string) => {
 export const searchGroup = async (name: string) => {
   const groupDocs = await firestore()
     .collection('groups')
-    .where('name', 'in', name)
+    .where('name', '==', name)
     .get();
 
   if (groupDocs.empty) {
-    return null;
+    return [];
   } else {
     const groupDoc = groupDocs.docs;
     return groupDoc.map(val => ({
       id: val.id,
       name: val.data()?.name,
+      members: val.data()?.members,
     }));
   }
 };
