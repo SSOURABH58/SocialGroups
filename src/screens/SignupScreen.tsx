@@ -1,21 +1,22 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {ParamListBase, useNavigation} from '@react-navigation/native';
-// import { useDispatch } from 'react-redux';
-// import { signup } from '../redux/authSlice';
+import {useDispatch} from 'react-redux';
 import InputField from '../components/InputField';
 import Button from '../components/Button';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {signupUser} from '../store/authSlice';
+import {AppDispatch} from '../store/store';
 
 const SignupScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
+  const [displayName, setUsername] = useState('');
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-  //   const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleSignup = () => {
-    // dispatch(signup({ email, password, username }));
+    dispatch(signupUser({email, password, displayName}));
   };
 
   return (
@@ -34,8 +35,8 @@ const SignupScreen = () => {
         secureTextEntry
       />
       <InputField
-        label="Username"
-        value={username}
+        label="displayName"
+        value={displayName}
         onChangeText={setUsername}
       />
       <Button label="Sign up" onPress={handleSignup} />

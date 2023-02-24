@@ -1,20 +1,21 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {useNavigation, ParamListBase} from '@react-navigation/native';
-// import { useDispatch } from 'react-redux';
-// import { login } from '../redux/authSlice';
+import {useDispatch} from 'react-redux';
 import InputField from '../components/InputField';
 import Button from '../components/Button';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {loginUser} from './../store/authSlice';
+import {AppDispatch} from '../store/store';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
-  //   const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleLogin = () => {
-    // dispatch(login({ email, password }));
+    dispatch(loginUser({email, password}));
   };
 
   return (

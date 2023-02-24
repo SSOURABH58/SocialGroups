@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1509414466",
+    "project_id": "mycaptainsocialgroups",
+    "storage_bucket": "mycaptainsocialgroups.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1509414466:android:23db79951cf8ccb1c3ffdb",
+        "android_client_info": {
+          "package_name": "com.socialgroups"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1509414466-78rb7vm9sgtb38aikjbalkp89ostvk02.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1pFmvofrbAfTJFk2xi_6OGu0m0iz0FtQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1509414466-78rb7vm9sgtb38aikjbalkp89ostvk02.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
