@@ -1,7 +1,11 @@
 import React, {useState} from 'react';
-import {View, StyleSheet, Modal} from 'react-native';
+import {StyleSheet, Modal} from 'react-native';
+import {useSelector} from 'react-redux';
+import {RootState} from '../store/store';
+import {theme} from '../utils/theme';
 import Button from './Button';
 import InputField from './InputField';
+import ThemeView from './ThemeView';
 
 type Props = {
   visible: boolean;
@@ -11,6 +15,8 @@ type Props = {
 
 const CreateGroupCard = ({visible, onClose, onSubmit}: Props) => {
   const [groupName, setGroupName] = useState('');
+  const isDarkTheme = useSelector((state: RootState) => state.theme.darkMode);
+  const colors = theme(isDarkTheme);
 
   const handleSubmit = () => {
     onSubmit(groupName);
@@ -23,7 +29,7 @@ const CreateGroupCard = ({visible, onClose, onSubmit}: Props) => {
       animationType="slide"
       onRequestClose={onClose}
       transparent={true}>
-      <View style={styles.modal}>
+      <ThemeView style={[styles.modal, {borderColor: colors.ackcolor}]}>
         <InputField
           label="Group Name"
           placeholder="Enter group name"
@@ -31,7 +37,7 @@ const CreateGroupCard = ({visible, onClose, onSubmit}: Props) => {
           onChangeText={setGroupName}
         />
         <Button label="Create Group" onPress={handleSubmit} />
-      </View>
+      </ThemeView>
     </Modal>
   );
 };
@@ -43,6 +49,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: '50%',
     marginHorizontal: '10%',
+    borderWidth: 8,
   },
 });
 

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {ParamListBase, useNavigation} from '@react-navigation/native';
 import {useDispatch} from 'react-redux';
 import InputField from '../components/InputField';
@@ -7,6 +7,8 @@ import Button from '../components/Button';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {signupUser} from '../store/authSlice';
 import {AppDispatch} from '../store/store';
+import ThemeView from '../components/ThemeView';
+import ThemeText from '../components/ThemeText';
 
 const SignupScreen = () => {
   const [email, setEmail] = useState('');
@@ -20,8 +22,8 @@ const SignupScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Sign up</Text>
+    <ThemeView style={styles.container}>
+      <ThemeText style={styles.title}>Sign up</ThemeText>
       <InputField
         label="Email"
         value={email}
@@ -40,15 +42,17 @@ const SignupScreen = () => {
         onChangeText={setUsername}
       />
       <Button label="Sign up" onPress={handleSignup} />
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Already have an account? </Text>
-        <Text
+      <ThemeView style={styles.footer}>
+        <ThemeText style={styles.footerText}>
+          Already have an account?{' '}
+        </ThemeText>
+        <ThemeText
           style={styles.footerLink}
           onPress={() => navigation.navigate('Login')}>
           Log in
-        </Text>
-      </View>
-    </View>
+        </ThemeText>
+      </ThemeView>
+    </ThemeView>
   );
 };
 

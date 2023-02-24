@@ -1,11 +1,13 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, FlatList, TextInput} from 'react-native';
+import {StyleSheet, FlatList, TextInput} from 'react-native';
 import Button from '../components/Button';
 import {Group} from '../types/Group';
 import {useDispatch} from 'react-redux';
 import JoinGroupItem from '../components/JoinGroupItem';
 import InputField from '../components/InputField';
 import {joinGroup, searchGroup} from '../utils/groups';
+import ThemeText from '../components/ThemeText';
+import ThemeView from '../components/ThemeView';
 
 const JoinGroupScreen = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -25,9 +27,9 @@ const JoinGroupScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Join a Group</Text>
-      <View style={styles.searchContainer}>
+    <ThemeView style={styles.container}>
+      <ThemeText style={styles.title}>Join a Group</ThemeText>
+      <ThemeView style={styles.searchContainer}>
         <InputField
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -35,8 +37,8 @@ const JoinGroupScreen = () => {
           label="Search groups"
         />
         <Button label="Search" onPress={handleSearch} />
-      </View>
-      <View style={styles.resultsContainer}>
+      </ThemeView>
+      <ThemeView style={styles.resultsContainer}>
         <FlatList
           data={searchResult}
           keyExtractor={item => item.id}
@@ -45,8 +47,8 @@ const JoinGroupScreen = () => {
           )}
           style={styles.resultsContainer}
         />
-      </View>
-    </View>
+      </ThemeView>
+    </ThemeView>
   );
 };
 

@@ -1,15 +1,28 @@
 import React from 'react';
-import {TextInput, StyleSheet, TextInputProps, Text} from 'react-native';
+import {TextInput, StyleSheet, TextInputProps} from 'react-native';
+import {useSelector} from 'react-redux';
+import {RootState} from '../store/store';
+import {theme} from '../utils/theme';
+import ThemeText from './ThemeText';
 
 type InputFieldProps = TextInputProps & {
   label: string;
 };
 
 const InputField: React.FC<InputFieldProps> = ({label, ...props}) => {
+  const isDarkTheme = useSelector((state: RootState) => state.theme.darkMode);
+  const colors = theme(isDarkTheme);
   return (
     <>
-      <Text>{label}</Text>
-      <TextInput style={styles.input} {...props} />
+      <ThemeText>{label}</ThemeText>
+      <TextInput
+        style={[
+          styles.input,
+          {color: colors.primcolor, borderColor: colors.primcolor},
+        ]}
+        placeholderTextColor={colors.primcolor}
+        {...props}
+      />
     </>
   );
 };

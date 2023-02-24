@@ -1,12 +1,14 @@
 import React from 'react';
-import {View, Text, ActivityIndicator, StyleSheet} from 'react-native';
+import {ActivityIndicator, StyleSheet} from 'react-native';
+import ThemeText from '../components/ThemeText';
+import ThemeView from '../components/ThemeView';
 
 const LoadingScreen = () => {
   return (
-    <View style={styles.container}>
-      <Text>Loading ...</Text>
+    <ThemeView style={styles.container}>
+      <ThemeText>Loading ...</ThemeText>
       <ActivityIndicator size="large" color="#0000ff" />
-    </View>
+    </ThemeView>
   );
 };
 

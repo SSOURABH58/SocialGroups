@@ -9,7 +9,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../store/store';
 import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 import LoadingScreen from '../screens/LoadingScreen';
-import {updateUserId} from '../store/authSlice';
+import {logout, updateUserId} from '../store/authSlice';
 
 const AppNavigator = () => {
   const [initializing, setInitializing] = useState(true);
@@ -17,8 +17,8 @@ const AppNavigator = () => {
   const dispatch = useDispatch();
 
   const onAuthStateChanged = async (user: FirebaseAuthTypes.User | null) => {
-    console.log('user?:', user);
     if (user) dispatch(updateUserId(user?.uid));
+    else dispatch(logout());
   };
 
   useEffect(() => {
@@ -30,10 +30,12 @@ const AppNavigator = () => {
     setInitializing(false);
   }, [user]);
 
+  console.log('user main', user);
+
   if (initializing) return <LoadingScreen />;
   return (
     <NavigationContainer>
-      {user ? <MainStack /> : <AuthStack />}
+      {user && user !== null ? <MainStack /> : <AuthStack />}
     </NavigationContainer>
   );
 };

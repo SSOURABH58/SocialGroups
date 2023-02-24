@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, FlatList, TextInput} from 'react-native';
+import {StyleSheet, FlatList, TextInput} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/store';
@@ -7,6 +7,8 @@ import {Message} from '../types/Message';
 import firestore from '@react-native-firebase/firestore';
 import Button from '../components/Button';
 import MessageItem from '../components/MessageItem';
+import ThemeView from '../components/ThemeView';
+import ThemeText from '../components/ThemeText';
 
 const ChatScreen = () => {
   const navigation = useNavigation();
@@ -71,8 +73,8 @@ const ChatScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Group Chat</Text>
+    <ThemeView style={styles.container}>
+      <ThemeText style={styles.title}>Group Chat</ThemeText>
       <FlatList
         data={messages}
         keyExtractor={item => item.id}
@@ -80,7 +82,7 @@ const ChatScreen = () => {
         style={styles.messageList}
         inverted
       />
-      <View style={styles.inputContainer}>
+      <ThemeView style={styles.inputContainer}>
         <TextInput
           style={styles.input}
           value={text}
@@ -88,8 +90,8 @@ const ChatScreen = () => {
           placeholder="Type your message here..."
         />
         <Button label="Send" onPress={handleSend} />
-      </View>
-    </View>
+      </ThemeView>
+    </ThemeView>
   );
 };
 

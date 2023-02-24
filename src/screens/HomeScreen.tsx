@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, FlatList, Modal} from 'react-native';
+import {StyleSheet, FlatList, Modal} from 'react-native';
 import {ParamListBase, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import Button from '../components/Button';
@@ -13,6 +13,9 @@ import firestore from '@react-native-firebase/firestore';
 import {updateProfile} from '../store/authSlice';
 import {profile} from '../types/User';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {setDarkMode} from '../store/themeSlice';
+import ThemeText from '../components/ThemeText';
+import ThemeView from '../components/ThemeView';
 
 const HomeScreen = () => {
   const groupsRef = firestore().collection('groups');
@@ -21,14 +24,16 @@ const HomeScreen = () => {
   const [groups, setGroups] = useState<Group[]>([]);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const user = useSelector((state: RootState) => state.auth.user);
+  const isDarkTheme = useSelector((state: RootState) => state.theme.darkMode);
 
   const dispatch = useDispatch();
 
   const userId = user?.uid;
   const groupIds = user?.profile?.groups;
 
-  console.log(groups);
-
+  const handleTheme = () => {
+    dispatch(setDarkMode(!isDarkTheme));
+  };
   const handleCreateGroup = async (groupName: string) => {
     await createGroup(groupName);
     setModalVisible(false);
@@ -78,9 +83,11 @@ const HomeScreen = () => {
   }, [groupIds]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome, {user?.profile?.displayName}!</Text>
-      <Text style={styles.subtitle}>Your Groups</Text>
+    <ThemeView style={[styles.container]}>
+      <ThemeText style={styles.title}>
+        Welcome, {user?.profile?.displayName}!
+      </ThemeText>
+      <ThemeText style={styles.subtitle}>Your Groups</ThemeText>
       <FlatList
         data={groups}
         keyExtractor={item => item.id}
@@ -89,12 +96,16 @@ const HomeScreen = () => {
       />
       <Button label="Create Group" onPress={() => setModalVisible(true)} />
       <Button label="Join Group" onPress={handleJoinGroup} />
+      <Button
+        label={isDarkTheme ? 'Use Light Theme' : 'Use Dark Theme'}
+        onPress={handleTheme}
+      />
       <CreateGroupCard
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onSubmit={handleCreateGroup}
       />
-    </View>
+    </ThemeView>
   );
 };
 

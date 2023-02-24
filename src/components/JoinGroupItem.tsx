@@ -1,7 +1,9 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import Button from './Button';
 import {Group} from '../types/Group';
+import ThemeText from './ThemeText';
+import ThemeView from './ThemeView';
 
 type Props = {
   item: Group;
@@ -16,10 +18,10 @@ const JoinGroupItem = ({item, onPress}: Props) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.groupName}>{item.name}</Text>
+    <ThemeView style={styles.container}>
+      <ThemeText style={styles.groupName}>{item.name}</ThemeText>
       <Button label="Join Group" onPress={handleJoinGroup} />
-    </View>
+    </ThemeView>
   );
 };
 

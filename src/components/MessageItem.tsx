@@ -1,8 +1,11 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {RootState} from '../store/store';
 import {Message} from '../types/Message';
+import {theme} from '../utils/theme';
+import ThemeText from './ThemeText';
+import ThemeView from './ThemeView';
 
 interface prop {
   item: Message;
@@ -12,18 +15,25 @@ const MessageItem = ({item}: prop) => {
   const {text, timestamp, user} = item;
   // const time = new Date(timestamp?.toDate()).toLocaleString();
   const CurrentUser = useSelector((state: RootState) => state.auth.user?.uid);
-  console.log(CurrentUser, user);
+  const isCurrentUser = CurrentUser === user.uid;
+
+  const isDarkTheme = useSelector((state: RootState) => state.theme.darkMode);
+  const colors = theme(isDarkTheme);
+
+  const myMsgColor = isDarkTheme ? '#A77979' : '#F4EAD5';
 
   return (
     <View
       style={
-        CurrentUser === user.uid
-          ? styles.currentUserContainer
-          : styles.otherUserContainer
+        isCurrentUser ? styles.currentUserContainer : styles.otherUserContainer
       }>
-      <View style={styles.messageContainer}>
-        <Text style={styles.messageText}>{text}</Text>
-        {/* <Text style={styles.timestampText}>{time}</Text> */}
+      <View
+        style={[
+          styles.messageContainer,
+          {backgroundColor: isCurrentUser ? myMsgColor : colors.ackcolor},
+        ]}>
+        <ThemeText style={styles.messageText}>{text}</ThemeText>
+        {/* <ThemeText style={styles.timestampText}>{time}</ThemeText> */}
       </View>
     </View>
   );
@@ -42,6 +52,7 @@ const styles = StyleSheet.create({
   messageContainer: {
     backgroundColor: '#f0f0f0',
     padding: 8,
+    paddingHorizontal: 12,
     borderRadius: 8,
     maxWidth: '70%',
   },

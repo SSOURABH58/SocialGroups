@@ -5,15 +5,22 @@ import {
   Text,
   TouchableOpacityProps,
 } from 'react-native';
+import {useSelector} from 'react-redux';
+import {RootState} from '../store/store';
+import {theme} from '../utils/theme';
 
 type ButtonProps = TouchableOpacityProps & {
   label: string;
 };
 
 const Button: React.FC<ButtonProps> = ({label, ...props}) => {
+  const isDarkTheme = useSelector((state: RootState) => state.theme.darkMode);
+  const colors = theme(isDarkTheme);
   return (
-    <TouchableOpacity style={styles.button} {...props}>
-      <Text style={styles.label}>{label}</Text>
+    <TouchableOpacity
+      style={[styles.button, {backgroundColor: colors.ackcolor}]}
+      {...props}>
+      <Text style={[styles.label, {color: colors.primcolor}]}>{label}</Text>
     </TouchableOpacity>
   );
 };
