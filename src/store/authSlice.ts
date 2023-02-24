@@ -1,3 +1,4 @@
+import {profile} from './../types/User';
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {login, signup} from './../utils/auth';
 import {FirebaseAuthTypes} from '@react-native-firebase/auth';
@@ -33,14 +34,19 @@ export const signupUser = createAsyncThunk(
   },
 );
 
+type user = {
+  profile?: profile;
+  uid?: string;
+};
+
 interface AuthState {
-  currentUser: FirebaseAuthTypes.User | null;
+  user: user | null;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: AuthState = {
-  currentUser: null,
+  user: null,
   isLoading: false,
   error: null,
 };
@@ -54,7 +60,7 @@ const authSlice = createSlice({
       state.error = null;
     },
     loginSuccess(state, action: PayloadAction<FirebaseAuthTypes.User>) {
-      state.currentUser = action.payload;
+      state.user = action.payload;
       state.isLoading = false;
       state.error = null;
     },
@@ -67,7 +73,7 @@ const authSlice = createSlice({
       state.error = null;
     },
     signupSuccess(state, action: PayloadAction<FirebaseAuthTypes.User>) {
-      state.currentUser = action.payload;
+      state.user = action.payload;
       state.isLoading = false;
       state.error = null;
     },
@@ -76,16 +82,16 @@ const authSlice = createSlice({
       state.error = action.payload;
     },
     logout(state) {
-      state.currentUser = null;
+      state.user = null;
     },
   },
   extraReducers(builder) {
     builder
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.currentUser = action.payload;
+        state.user = action.payload;
       })
       .addCase(signupUser.fulfilled, (state, action) => {
-        state.currentUser = action.payload;
+        state.user = action.payload;
       });
   },
 });
