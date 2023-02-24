@@ -1,107 +1,96 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, FlatList} from 'react-native';
-// import { useNavigation } from '@react-navigation/native';
-// import { useSelector } from 'react-redux';
-// import { RootState } from '../redux/store';
+import {View, Text, StyleSheet, FlatList, Modal} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
 import Button from '../components/Button';
-
-interface Group {
-  id: string;
-  name: string;
-  description: string;
-}
-
-interface Message {
-  id: string;
-  groupId: string;
-  text: string;
-  timestamp: number;
-}
+import InputField from '../components/InputField';
+import {RootState} from '../store/store';
+import {Group} from '../types/Group';
+import GroupItem from '../components/GroupItem';
+import CreateGroupCard from '../components/CreateGroupCard';
+import {createGroup} from '../utils/groups';
+import firestore from '@react-native-firebase/firestore';
+import {updateProfile} from '../store/authSlice';
+import {profile} from '../types/User';
 
 const HomeScreen = () => {
-  // const navigation = useNavigation();
+  const groupsRef = firestore().collection('groups');
+
+  const navigation = useNavigation();
   const [groups, setGroups] = useState<Group[]>([]);
-  const [messages, setMessages] = useState<Message[]>([]);
-  // const currentUser = useSelector((state: RootState) => state.auth.currentUser);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const user = useSelector((state: RootState) => state.auth.user);
 
-  // Load groups and messages from Firebase when the component mounts
-  useEffect(() => {
-    // TODO: Load groups and messages from Firebase
-    // For now, we'll just use some dummy data
-    const dummyGroups: Group[] = [
-      {id: '1', name: 'Group 1', description: 'Description of Group 1'},
-      {id: '2', name: 'Group 2', description: 'Description of Group 2'},
-      {id: '3', name: 'Group 3', description: 'Description of Group 3'},
-    ];
-    setGroups(dummyGroups);
+  const dispatch = useDispatch();
 
-    const dummyMessages: Message[] = [
-      {
-        id: '1',
-        groupId: '1',
-        text: 'Message 1 for Group 1',
-        timestamp: Date.now(),
-      },
-      {
-        id: '2',
-        groupId: '1',
-        text: 'Message 2 for Group 1',
-        timestamp: Date.now(),
-      },
-      {
-        id: '3',
-        groupId: '2',
-        text: 'Message 1 for Group 2',
-        timestamp: Date.now(),
-      },
-    ];
-    setMessages(dummyMessages);
-  }, []);
+  const userId = user?.uid;
+  const groupIds = user?.profile?.groups;
 
-  const handleCreateGroup = () => {
-    // navigation.navigate('CreateGroup');
+  console.log(groups);
+
+  const handleCreateGroup = async (groupName: string) => {
+    await createGroup(groupName);
+    setModalVisible(false);
   };
 
   const handleJoinGroup = () => {
     // navigation.navigate('JoinGroup');
   };
 
-  const renderGroupItem = ({item}: {item: Group}) => (
-    <View style={styles.groupItem}>
-      <Text style={styles.groupName}>{item.name}</Text>
-      <Text style={styles.groupDescription}>{item.description}</Text>
-    </View>
-  );
+  useEffect(() => {
+    const unsubscribe = userId
+      ? firestore()
+          .collection('users')
+          .doc(userId)
+          .onSnapshot(documentSnapshot => {
+            console.log('User data: ', documentSnapshot.data());
+            dispatch(updateProfile(documentSnapshot.data() as profile));
+          })
+      : null;
 
-  const renderMessageItem = ({item}: {item: Message}) => (
-    <View style={styles.messageItem}>
-      <Text style={styles.messageText}>{item.text}</Text>
-      <Text style={styles.messageTimestamp}>
-        {new Date(item.timestamp).toLocaleString()}
-      </Text>
-    </View>
-  );
+    return () => {
+      unsubscribe && unsubscribe();
+    };
+  }, [userId]);
+
+  useEffect(() => {
+    const unsubscribe = groupIds
+      ? groupsRef
+          .where(firestore.FieldPath.documentId(), 'in', groupIds)
+          .onSnapshot(querySnapshot => {
+            const newGroups: Group[] = [];
+            querySnapshot.forEach(doc => {
+              const {name} = doc.data();
+              newGroups.push({
+                name,
+                id: doc.id,
+              });
+            });
+            setGroups(newGroups);
+          })
+      : null;
+    return () => {
+      unsubscribe && unsubscribe();
+    };
+  }, [groupIds]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome, Sourabh!</Text>
-      {/* <Text style={styles.title}>Welcome, {currentUser?.displayName}!</Text> */}
+      <Text style={styles.title}>Welcome, {user?.profile?.displayName}!</Text>
       <Text style={styles.subtitle}>Your Groups</Text>
       <FlatList
         data={groups}
         keyExtractor={item => item.id}
-        renderItem={renderGroupItem}
+        renderItem={({item}) => <GroupItem item={item} key={item.id} />}
         style={styles.groupList}
       />
-      <Text style={styles.subtitle}>Your Messages</Text>
-      <FlatList
-        data={messages}
-        keyExtractor={item => item.id}
-        renderItem={renderMessageItem}
-        style={styles.messageList}
-      />
-      <Button label="Create Group" onPress={handleCreateGroup} />
+      <Button label="Create Group" onPress={() => setModalVisible(true)} />
       <Button label="Join Group" onPress={handleJoinGroup} />
+      <CreateGroupCard
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onSubmit={handleCreateGroup}
+      />
     </View>
   );
 };
@@ -127,37 +116,31 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 16,
   },
-  groupItem: {
-    backgroundColor: '#f0f0f0',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 8,
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  groupName: {
-    fontSize: 18,
+  modalView: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
     fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  groupDescription: {
-    fontSize: 14,
-  },
-  messageList: {
-    marginTop: 8,
-    marginBottom: 16,
-  },
-  messageItem: {
-    backgroundColor: '#f0f0f0',
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  messageText: {
-    fontSize: 14,
-  },
-  messageTimestamp: {
-    fontSize: 12,
-    color: '#999',
-    marginTop: 4,
+    fontSize: 20,
   },
 });
 

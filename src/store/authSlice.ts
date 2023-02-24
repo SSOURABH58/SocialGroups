@@ -55,34 +55,11 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    loginStart(state) {
-      state.isLoading = true;
-      state.error = null;
+    updateProfile(state, action: PayloadAction<profile>) {
+      state.user = {...state.user, profile: action.payload};
     },
-    loginSuccess(state, action: PayloadAction<FirebaseAuthTypes.User>) {
-      state.user = action.payload;
-      state.isLoading = false;
-      state.error = null;
-    },
-    loginFailure(state, action: PayloadAction<string>) {
-      state.isLoading = false;
-      state.error = action.payload;
-    },
-    signupStart(state) {
-      state.isLoading = true;
-      state.error = null;
-    },
-    signupSuccess(state, action: PayloadAction<FirebaseAuthTypes.User>) {
-      state.user = action.payload;
-      state.isLoading = false;
-      state.error = null;
-    },
-    signupFailure(state, action: PayloadAction<string>) {
-      state.isLoading = false;
-      state.error = action.payload;
-    },
-    logout(state) {
-      state.user = null;
+    updateUserId(state, action: PayloadAction<string>) {
+      state.user = {...state.user, uid: action.payload};
     },
   },
   extraReducers(builder) {
@@ -96,14 +73,6 @@ const authSlice = createSlice({
   },
 });
 
-export const {
-  loginStart,
-  loginSuccess,
-  loginFailure,
-  signupStart,
-  signupSuccess,
-  signupFailure,
-  logout,
-} = authSlice.actions;
+export const {updateProfile, updateUserId} = authSlice.actions;
 
 export default authSlice.reducer;
